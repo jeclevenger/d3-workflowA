@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style> 
+#d3container {
+
+	width: 960px; 
+	margin:0 auto;
+}
+#d3plot {
+
+	text-align: center;
+}
+path { 
+    stroke: steelblue;
+    stroke-width: 3;
+    fill: none;
+}
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+.tick line {
+	opacity: 0.2;
+}
+.tick text {
+	font-size: 16px;
+}
+body {
+	font-size: 24px;
+}
+
+</style>
+<body>
+<div id="d3container">
+	<div id="d3plot"></div>
+	<div id="d3legend"></div>
+</div>
+
+<!-- load the d3.js library -->    
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<!-- load python prepared data -->   
+<script src="test_data2.js"></script>
+<script>
+var data = test_data2['sets'];
+// Set things
+var graphDims = {height: 400, width: 900};
+var labelsize = 18;
+var legendDims = {height: data.length*3*labelsize, width: 600};
+var margin = {top: 50, right: 50, bottom: 50, left: 60},
+    width = graphDims.width - margin.left - margin.right,
+    height = graphDims.height - margin.top - margin.bottom;
+// ranges calc'd in python
+var xRange = d3.scale.linear().range([0, width])
+								.domain(test_data2['meta']['xrange']);
+var yRange = d3.scale.linear().range([height, 0])
+								.domain(test_data2['meta']['yrange']);
+// set ticks
+var xAxis = d3.svg.axis()
+	.scale(xRange)
+    .orient("bottom")
+	.innerTickSize(-height)
+	.tickPadding(10);
+var yAxis = d3.svg.axis()
+	.scale(yRange)
+    .orient("left")
+	.innerTickSize(-width)
+	.tickPadding(10);
+// line
+var priceline = d3.svg.line()	
+    .x(function(d) { return xRange(d.x); })
+    .y(function(d) { return yRange(d.y); });
+//build plot
+var plotDiv = d3.select("#d3plot");
+plotDiv.append("h1").html(test_data2['meta']['title']).attr("style", "margin-bottom: 0;");
+var svg = plotDiv
+    .append("svg")
+		.attr("id", "svggraph") // assign ID
+        .attr("width", graphDims.width)
+        .attr("height", graphDims.height)
+    .append("g")
+        .attr("transform", 
+              "translate(" + margin.left + "," + margin.top + ")");
+var legendDiv = d3.select("#d3legend");
+legendDiv.append("h3").html("Interactive Legend").attr("style", "margin-bottom: 0;padding-left: 1em;");
+var svgLegend = legendDiv
+    .append("svg")
+        .attr("width", legendDims.width)
+        .attr("height", legendDims.height)
+    .append("g")
+        .attr("transform", 
+              "translate(" + margin.left + "," + margin.top/2 + ")");
+// set the colour scale
+var color = d3.scale.category10();
+// Loop through each line / name
+data.forEach(function(d,i) { 
+	var linecolor = color(d.name);
+	// draw line
+    svg.append("path")
+        .attr("class", "line")
+        .style("stroke", linecolor)
+        .attr("id", 'tag'+d.name.replace(/\s+/g, '')) // assign ID
+        .attr("d", priceline(d.values));
+	// draw scatter
+	svg.selectAll('.circles'+d.name.replace(/\s+/g, ''))
+		.data(d.values)
+		.enter().append("circle")
+			.attr("class", 'circles'+d.name.replace(/\s+/g, ''))
+			.attr("r", 4)
+			.attr("fill", linecolor)
+			.attr("cx", function(d) { return xRange(d.x); })
+			.attr("cy", function(d) { return yRange(d.y); })
+    // Add the Legend
+	var legendlabel = svgLegend.append("g")
+        .attr("transform", 
+              "translate(" + 0 + "," + i*2*labelsize + ")")
+		.on("click", function(){
+            // Determine if current line is visible 
+            var active   = d.active ? false : true,
+            newOpacity = active ? 0 : 1;
+			newFill = active ? "#EEE" : linecolor;
+            // Hide or show the elements based on the ID
+            d3.select("#tag"+d.name.replace(/\s+/g, ''))
+                .transition().duration(500) 
+                .style("opacity", newOpacity);
+			// hide show cricles
+            d3.selectAll(".circles"+d.name.replace(/\s+/g, ''))
+                .transition().duration(500) 
+                .style("opacity", newOpacity); 
+			// hide show legend rect fill
+            d3.select("#labeltag"+d.name.replace(/\s+/g, ''))
+                .transition().duration(500) 
+                .style("fill", newFill);
+            // Update whether or not the elements are active
+            d.active = active;
+            });
+	legendlabel.append("rect")
+		.attr("width", labelsize)
+		.attr("height", labelsize)
+		.attr("x", -labelsize)
+        .attr("y", -labelsize)
+		.attr("style", "cursor: pointer;")
+		.attr("id", 'labeltag'+d.name.replace(/\s+/g, '')) // assign ID
+		.attr("stroke-width", 2)
+		.attr("stroke", linecolor)
+		.attr("fill", linecolor);
+
+    legendlabel.append("text")
+		.attr("x", labelsize)
+        .attr("class", "legend")
+		.attr("style", "cursor: pointer;")
+        .text(d.name); 
+});
+// Add the X Axis
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+svg.append("text")
+	.attr("class", "x label")
+	.attr("x", width/2-test_data2['meta']['xlabel'].length*4)
+	.attr("y", height + margin.top)
+	.text(test_data2['meta']['xlabel']);
+// Add the Y Axis
+svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis);
+svg.append("text")
+	.attr("class", "y label")
+	.attr("x", -height/2-test_data2['meta']['xlabel'].length*8)
+	.attr("y", -margin.left/2-10)
+	.attr("transform", "rotate(-90)")
+	.text(test_data2['meta']['ylabel']);
+</script>
+</body>

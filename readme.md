@@ -1,7 +1,8 @@
 <h2>d3-workflowA</h2>
-<p>currently hosted on <a href="http://www.jeclevenger.com/static-sites/d3-workflowA">JEClevenger.com/static-sites/jec-timeline</a></p>
+<p>currently hosted on <a href="http://www.jeclevenger.com/static-sites/d3-workflowA">JEClevenger.com/static-sites/d3-workflowA</a></p>
 <hr>
 
+<h4>open <a href="https://github.com/jeclevenger/d3-workflowA/blob/master/index.html">index.html</a> for local example</h4>
 
 <h4>Common workflow</h4>
 <ol>
@@ -11,8 +12,8 @@
 <li>lowest barrier of access for everyone? the internet (browser as the GUI)</li>
 <li><a href="https://d3js.org/">D3.js</a></li>
 <li>data is typically in list format (or numpy array)</li>
-<li>put into D3 format</li>
-<li>load as javascript variable for local development ease of access</li>
+<li><a href="https://github.com/jeclevenger/d3-workflowA/blob/master/data_format.py">put into D3 format</a></li>
+<li>load as <a href="https://github.com/jeclevenger/d3-workflowA/blob/master/test_data2.js">javascript variable</a> for local development ease of access</li>
 <li>line plot comparing metrics common to the target audience</li>
 </ol>
 

@@ -2,9 +2,9 @@
 <meta charset="utf-8">
 <style> 
 #d3container {
-
 	width: 960px; 
 	margin:0 auto;
+    border: 5px solid #EEEEEE;
 }
 #d3plot {
 
@@ -34,6 +34,9 @@ body {
 
 </style>
 <body>
+<h1>d3-workflowA</h1>
+<p>currently hosted on <a href="jeclevenger.com/static-sites/d3-workflowA">jeclevenger.com/static-sites/d3-workflowA</a></p>
+<p style="padding-bottom: 4em;">code on <a href="https://github.com/jeclevenger/d3-workflowA">GitHub</a></p>
 <div id="d3container">
 	<div id="d3plot"></div>
 	<div id="d3legend"></div>
@@ -74,7 +77,7 @@ var priceline = d3.svg.line()
     .y(function(d) { return yRange(d.y); });
 //build plot
 var plotDiv = d3.select("#d3plot");
-plotDiv.append("h1").html(test_data2['meta']['title']).attr("style", "margin-bottom: 0;");
+plotDiv.append("h2").html(test_data2['meta']['title']).attr("style", "margin-bottom: 0;");
 var svg = plotDiv
     .append("svg")
 		.attr("id", "svggraph") // assign ID

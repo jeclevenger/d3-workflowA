@@ -1,5 +1,5 @@
 <h2>d3-workflowA</h2>
-<p>currently hosted on <a href="http://www.jeclevenger.com/static-sites/d3-workflowA">JEClevenger.com/static-sites/d3-workflowA</a></p>
+<p>currently hosted on <a href="http://www.jeclevenger.com/static-site/d3-workflowA">JEClevenger.com/static-site/d3-workflowA</a></p>
 <hr>
 
 <h4>open <a href="https://github.com/jeclevenger/d3-workflowA/blob/master/index.html">index.html</a> for local example</h4>
